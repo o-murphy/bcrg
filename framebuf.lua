@@ -22,6 +22,14 @@ function Framebuffer:set_pixel(x, y, r, g, b)
     end
 end
 
+function Framebuffer:fill(r, g, b)
+    for y = 1, self.height do
+        for x = 1, self.width do
+            self.buffer[y][x] = {r, g, b}
+        end
+    end
+end
+
 function Framebuffer:save_bmp(filename)
     local file = io.open(filename, "wb")
     local pad = (4 - (self.width * 3) % 4) % 4

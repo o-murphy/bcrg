@@ -5,7 +5,7 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
 
     local ax = click_x / zoom
     local ay = click_y / zoom
-    print(ax, ay)
+    --print(ax, ay)  -- for debug only
 
     local function round(v)
         if v < 0 then
@@ -27,48 +27,29 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
 
     local fb = make_canvas(width, height, 1)
     fb:fill(1)
+
+    -- main cross
     fb:c_line(adjx(1.25), 0, adjx(100), 0, 0)
     fb:c_line(adjx(-1.25), 0, adjx(-100), 0, 0)
     fb:c_line(0, adjy(1.25), 0, adjy(100), 0, 0)
     fb:c_line(0, adjy(-1.25), 0, adjy(-100), 0, 0)
 
-
-
-    -- step 1mil ruler
-    if ax <= 2.01 then
-
-        for i = 10, 100, 10 do
-            fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
-            fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
-            fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
-            fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
-        end
-
-        for i = 10, 40, 10 do
-            fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
-            fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
-        end
+    -- step 1 or 2mil ruler
+    for i = 10, 100, (ax <= 2.01) and 10 or 20 do
+        fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
+        fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
+        fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
+        fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
     end
 
-    -- step 2mil ruler
-    if ax > 2.01 then
-        for i = 10, 100, 20 do
-            fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
-            fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
-            fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
-            fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
-        end
-
-        -- step 2mil ruler
-        for i = 10, 40, 20 do
-            fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
-            fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
-        end
+    -- step 1 or 2mil ruler
+    for i = 10, 40, (ax <= 2.01) and 10 or 20 do
+        fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
+        fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
     end
 
     -- step 0.5mil
     if ax <= 1.4 then
-
         for i = 5, 100, 5 do
             fb:c_line(adjx(i), adjy(-1.25), adjx(i), adjy(1.25), 0)
             fb:c_line(adjx(-i), adjy(-1.25), adjx(-i), adjy(1.25), 0)

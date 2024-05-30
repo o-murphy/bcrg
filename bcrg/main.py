@@ -47,8 +47,8 @@ if __name__ == '__main__':
     bmp_bytearray = LuaReticleLoader('mrad.lua').make_reticle(
         640,
         640,
-        3.01,
-        3.01,
+        2,
+        2,
         1,
         None
     )

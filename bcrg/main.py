@@ -35,7 +35,7 @@ class LuaReticleLoader:
 if __name__ == '__main__':
 
     # Call the function with desired parameters (e.g., 1-bit depth)
-    width, height, bit_depth = 300, 200, 1
+    width, height, bit_depth = 640, 480, 1
     bmp_bytearray = LuaReticleLoader().make_bmp(width, height, bit_depth)
 
 

@@ -32,16 +32,38 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     fb:c_line(0, adjy(1.25), 0, adjy(100), 0, 0)
     fb:c_line(0, adjy(-1.25), 0, adjy(-100), 0, 0)
 
-    for i = 10, 100, 10 do
-        fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
-        fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
-        fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
-        fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
+
+
+    -- step 1mil ruler
+    if ax <= 2.01 then
+
+        for i = 10, 100, 10 do
+            fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
+            fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
+            fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
+            fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
+        end
+
+        for i = 10, 40, 10 do
+            fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
+            fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
+        end
     end
 
-    for i = 10, 40, 10 do
-        fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
-        fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
+    -- step 2mil ruler
+    if ax > 2.01 then
+        for i = 10, 100, 20 do
+            fb:c_line(adjx(i), adjy(-2.5), adjx(i), adjy(2.5), 0)
+            fb:c_line(adjx(-i), adjy(-2.5), adjx(-i), adjy(2.5), 0)
+            fb:c_line(adjx(-2.5), adjy(i), adjx(2.5), adjy(i), 0)
+            fb:c_line(adjx(-2.5), adjy(-i), adjx(2.5), adjy(-i), 0)
+        end
+
+        -- step 2mil ruler
+        for i = 10, 40, 20 do
+            fb:c_line(adjx(i), adjy(-5), adjx(i), adjy(5), 0)
+            fb:c_line(adjx(-i), adjy(-5), adjx(-i), adjy(5), 0)
+        end
     end
 
     -- step 0.5mil

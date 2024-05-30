@@ -1,5 +1,7 @@
 -- framebuffer._lua
 
+require("font")
+
 -- Frame buffer format constants
 MVLSB = 0  -- Single bit displays (like SSD1306 OLED)
 RGB565 = 1 -- 16-bit color displays
@@ -167,128 +169,9 @@ function FrameBuffer:scroll()
     error("Not implemented")
 end
 
-function FrameBuffer:text()
-    error("Not implemented")
-end
-
---function FrameBuffer:to_bmp()
---    local function int_to_bytes(n, bytes)
---        local res = {}
---        for i = 1, bytes do
---            res[i] = string.char(n % 256)
---            n = math.floor(n / 256)
---        end
---        return table.concat(res)
---    end
---
---    local function get_bmp_header(width, height, filesize)
---        local fileHeader = "BM" .. int_to_bytes(filesize, 4) .. "\0\0\0\0" .. int_to_bytes(54, 4)
---        local dibHeader = int_to_bytes(40, 4) .. int_to_bytes(width, 4) .. int_to_bytes(height, 4) ..
---                          int_to_bytes(1, 2) .. int_to_bytes(24, 2) .. "\0\0\0\0" ..
---                          int_to_bytes(filesize - 54, 4) .. "\x13\x0B\0\0\x13\x0B\0\0\0\0\0\0\0\0\0\0"
---        return fileHeader .. dibHeader
---    end
---
---    local function get_pixel_data(fb)
---        local pixel_data = {}
---        for y = fb.height - 1, 0, -1 do
---            for x = 0, fb.width - 1 do
---                local color
---                if fb.format == MVLSBFormat then
---                    color = fb:pixel(x, y) == 1 and {255, 255, 255} or {0, 0, 0}
---                elseif fb.format == RGB565Format then
---                    local color565 = fb:pixel(x, y)
---                    color = {
---                        ((color565 >> 11) & 0x1F) * 255 / 31,
---                        ((color565 >> 5) & 0x3F) * 255 / 63,
---                        (color565 & 0x1F) * 255 / 31
---                    }
---                end
---                table.insert(pixel_data, string.char(color[3], color[2], color[1]))
---            end
---            -- Pad row to multiple of 4 bytes
---            while (#pixel_data % 4 ~= 0) do
---                table.insert(pixel_data, "\0")
---            end
---        end
---        return table.concat(pixel_data)
---    end
---
---    local pixel_data = get_pixel_data(self)
---    local filesize = 54 + #pixel_data
---    local bmp_header = get_bmp_header(self.width, self.height, filesize)
---    return bmp_header .. pixel_data
+--function FrameBuffer:text()
+--    error("Not implemented")
 --end
-
-
---function FrameBuffer:to_bmp()
---    local function int_to_bytes(n, bytes)
---        local res = {}
---        for i = 1, bytes do
---            res[i] = n % 256
---            n = math.floor(n / 256)
---        end
---        return res
---    end
---
---    local function get_bmp_header(width, height, filesize)
---        local fileHeader = {66, 77} -- "BM"
---        for _, v in ipairs(int_to_bytes(filesize, 4)) do table.insert(fileHeader, v) end
---        for _, v in ipairs({0, 0, 0, 0}) do table.insert(fileHeader, v) end
---        for _, v in ipairs(int_to_bytes(54, 4)) do table.insert(fileHeader, v) end
---
---        local dibHeader = {}
---        for _, v in ipairs(int_to_bytes(40, 4)) do table.insert(dibHeader, v) end
---        for _, v in ipairs(int_to_bytes(width, 4)) do table.insert(dibHeader, v) end
---        for _, v in ipairs(int_to_bytes(height, 4)) do table.insert(dibHeader, v) end
---        for _, v in ipairs(int_to_bytes(1, 2)) do table.insert(dibHeader, v) end
---        for _, v in ipairs(int_to_bytes(24, 2)) do table.insert(dibHeader, v) end
---        for _, v in ipairs({0, 0, 0, 0}) do table.insert(dibHeader, v) end
---        for _, v in ipairs(int_to_bytes(filesize - 54, 4)) do table.insert(dibHeader, v) end
---        for _, v in ipairs({19, 11, 0, 0, 19, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}) do table.insert(dibHeader, v) end
---
---        for _, v in ipairs(dibHeader) do table.insert(fileHeader, v) end
---        return fileHeader
---    end
---
---    local function get_pixel_data(fb)
---        local pixel_data = {}
---        for y = fb.height - 1, 0, -1 do
---            for x = 0, fb.width - 1 do
---                local color
---                if fb.format == MVLSBFormat then
---                    color = fb:pixel(x, y) == 1 and {255, 255, 255} or {0, 0, 0}
---                elseif fb.format == RGB565Format then
---                    local color565 = fb:pixel(x, y)
---                    color = {
---                        ((color565 >> 11) & 0x1F) * 255 / 31,
---                        ((color565 >> 5) & 0x3F) * 255 / 63,
---                        (color565 & 0x1F) * 255 / 31
---                    }
---                end
---                table.insert(pixel_data, color[3])
---                table.insert(pixel_data, color[2])
---                table.insert(pixel_data, color[1])
---            end
---            -- Pad row to multiple of 4 bytes
---            while (#pixel_data % 4 ~= 0) do
---                table.insert(pixel_data, 0)
---            end
---        end
---        return pixel_data
---    end
---
---    local pixel_data = get_pixel_data(self)
---    local filesize = 54 + #pixel_data
---    local bmp_header = get_bmp_header(self.width, self.height, filesize)
---    local bmp_data = {}
---
---    for _, v in ipairs(bmp_header) do table.insert(bmp_data, v) end
---    for _, v in ipairs(pixel_data) do table.insert(bmp_data, v) end
---
---    return string.char(table.unpack(bmp_data))
---end
-
 
 function FrameBuffer:to_bmp()
     local function int_to_bytes(n, bytes)
@@ -551,6 +434,88 @@ function FrameBuffer:polygon(points, color)
                 self:pixel(x, y, color)
             end
         end
+    end
+end
+
+
+
+-- Custom bitwise operations
+function bit_band(a, b)
+    local result = 0
+    local bitval = 1
+    while a > 0 and b > 0 do
+        local abit = a % 2
+        local bbit = b % 2
+        if abit + bbit > 1 then
+            result = result + bitval
+        end
+        bitval = bitval * 2
+        a = math.floor(a / 2)
+        b = math.floor(b / 2)
+    end
+    return result
+end
+
+function bit_lshift(a, b)
+    return a * 2^b
+end
+
+
+function FrameBuffer:text(s, x0, y0, col)
+    col = col or 1
+    for i = 1, #s do
+        local chr = string.byte(s, i)
+        if chr < 32 or chr > 127 then
+            chr = 127
+        end
+        local chr_data = {}
+        for j = 0, 7 do
+            chr_data[j+1] = font_petme128_8x8[(chr - 32) * 8 + j + 1]
+        end
+        for j = 1, 8 do
+            if x0 + j - 1 >= self.width then
+                break
+            end
+            local vline_data = chr_data[j]
+            for bit = 0, 7 do
+                if bit_band(vline_data, bit_lshift(1, bit)) ~= 0 then
+                    local y = y0 + bit
+                    if y >= 1 and y <= self.height then
+                        self:pixel(x0 + j - 1, y, col)
+                    end
+                end
+            end
+        end
+        x0 = x0 + 8
+    end
+end
+
+function FrameBuffer:text6(s, x0, y0, col)
+    col = col or 1
+    for i = 1, #s do
+        local chr = string.byte(s, i)
+        if chr < 32 or chr > 127 then
+            chr = 127
+        end
+        local chr_data = {}
+        for j = 0, 5 do
+            chr_data[j+1] = font_128_6x6[(chr - 32) * 6 + j + 1]
+        end
+        for j = 1, 6 do
+            if x0 + j - 1 >= self.width then
+                break
+            end
+            local vline_data = chr_data[j]
+            for bit = 0, 5 do
+                if bit_band(vline_data, bit_lshift(1, bit)) ~= 0 then
+                    local y = y0 + bit
+                    if y >= 1 and y <= self.height then
+                        self:pixel(x0 + j - 1, y, col)
+                    end
+                end
+            end
+        end
+        x0 = x0 + 6
     end
 end
 

@@ -88,5 +88,7 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
         W = W + 10
     end
 
+    fb:text6("0123456789", 10, 10, 0)
+
     return fb:to_bmp()
 end

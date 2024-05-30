@@ -91,6 +91,13 @@ function ReticleDraw:c_fill_circle(x, y, r, color)
     self:fill_ellipse_by_center(self.cx + x, self.cy + y, r, r, color)
 end
 
+function ReticleDraw:c_text6(s, x, y, color)
+    local sh = 2
+    local l = string.len(s)
+    local hw = l * 5.8 // 2
+    self:text6(s, self.cx + x - hw, self.cy + y - sh, color)
+end
+
 function make_canvas(width, height, bit_depth)
     local buffer_size = (width * height * bit_depth) / 8
 

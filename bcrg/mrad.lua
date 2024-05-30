@@ -5,7 +5,7 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
 
     local ax = click_x / zoom
     local ay = click_y / zoom
-    --print(ax, ay)  -- for debug only
+    print(ax, ay)  -- for debug only
 
     local function round(v)
         if v < 0 then
@@ -88,7 +88,17 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
         W = W + 10
     end
 
-    fb:text6("0123456789", 10, 10, 0)
+    if ax <= 0.9 then
+        for x = 20, 40, 20 do
+            fb:c_text6(tostring(x // 10), adjx(x), adjy(-10), 0)
+            fb:c_text6(tostring(x // 10), adjx(-x), adjy(-10), 0)
+        end
+
+        for x = 60, 100, 20 do
+            fb:c_text6(tostring(x // 10), adjx(x), adjy(-7.5), 0)
+            fb:c_text6(tostring(x // 10), adjx(-x), adjy(-7.5), 0)
+        end
+    end
 
     return fb:to_bmp()
 end

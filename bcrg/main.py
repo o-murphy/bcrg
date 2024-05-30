@@ -32,10 +32,9 @@ class LuaReticleLoader:
             table = self._make_fb(width, height, bit_depth)
             return bytes(self._unpack_lua_table(table))
 
-    def make_reticle(self, width, height, click_x, click_y, zoom, min_x_step, min_y_step, adjustment) -> bytes:
+    def make_reticle(self, width, height, click_x, click_y, zoom, adjustment) -> bytes:
         if self._make_reticle is not None:
-            table = self._make_reticle(width, height, click_x, click_y, zoom, min_x_step, min_y_step, adjustment)
-            print(table)
+            table = self._make_reticle(width, height, click_x, click_y, zoom, adjustment)
             return bytes(self._unpack_lua_table(table))
 
 
@@ -50,9 +49,7 @@ if __name__ == '__main__':
         640,
         1.4,
         1.4,
-        1,
-        None,
-        None,
+        4,
         None
     )
 

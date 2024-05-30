@@ -1,6 +1,6 @@
 require("reticledraw")
 
-function make_reticle(width, height, click_x, click_y, zoom, min_x_step, min_y_step, adjustment)
+function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     -- Initialize the frame buffer
 
     local ax = click_x / zoom
@@ -63,79 +63,26 @@ function make_reticle(width, height, click_x, click_y, zoom, min_x_step, min_y_s
         end
     end
 
+    --step 0.2mil, tree
     if ax <= 0.6 then
-
-        for i = 2.5, 20, 2.5 do
-            fb:c_pixel(adjx(i), adjy(10), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(10), 0, 0)
+        local W = 20
+        for y = 10, 100, 20 do
+            for x = -W, W, 2.5 do
+                fb:c_pixel(adjx(x), adjy(y), 0, 0)
+                fb:c_pixel(adjx(-x), adjy(y + 10), 0, 0)
+            end
+            W = W + 10
         end
-
-        for i = 2.5, 20, 2.5 do
-            fb:c_pixel(adjx(i), adjy(20), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(20), 0, 0)
-        end
-
-        for i = 2.5, 30, 2.5 do
-            fb:c_pixel(adjx(i), adjy(30), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(30), 0, 0)
-        end
-        for i = 2.5, 30, 2.5 do
-            fb:c_pixel(adjx(i), adjy(40), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(40), 0, 0)
-        end
-
-        for i = 2.5, 40, 2.5 do
-            fb:c_pixel(adjx(i), adjy(50), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(50), 0, 0)
-        end
-        for i = 2.5, 40, 2.5 do
-            fb:c_pixel(adjx(i), adjy(60), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(60), 0, 0)
-        end
-
-        for i = 2.5, 50, 2.5 do
-            fb:c_pixel(adjx(i), adjy(70), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(70), 0, 0)
-        end
-        for i = 2.5, 50, 2.5 do
-            fb:c_pixel(adjx(i), adjy(80), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(80), 0, 0)
-        end
-
-        for i = 2.5, 60, 2.5 do
-            fb:c_pixel(adjx(i), adjy(90), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(90), 0, 0)
-        end
-        for i = 2.5, 60, 2.5 do
-            fb:c_pixel(adjx(i), adjy(100), 0, 0)
-            fb:c_pixel(adjx(-i), adjy(100), 0, 0)
-        end
-
     end
 
-    for i = -20, 20, 10 do
-        fb:c_line(adjx(i), adjy(10 - 0.35), adjx(i), adjy(10 + 0.35), 0)
-        fb:c_line(adjx(i), adjy(20 - 0.35), adjx(i), adjy(20 + 0.35), 0)
-    end
-
-    for i = -30, 30, 10 do
-        fb:c_line(adjx(i), adjy(30 - 0.35), adjx(i), adjy(30 + 0.35), 0)
-        fb:c_line(adjx(i), adjy(40 - 0.35), adjx(i), adjy(40 + 0.35), 0)
-    end
-
-    for i = -40, 40, 10 do
-        fb:c_line(adjx(i), adjy(50 - 0.35), adjx(i), adjy(50 + 0.35), 0)
-        fb:c_line(adjx(i), adjy(60 - 0.35), adjx(i), adjy(60 + 0.35), 0)
-    end
-
-    for i = -50, 50, 10 do
-        fb:c_line(adjx(i), adjy(70 - 0.35), adjx(i), adjy(70 + 0.35), 0)
-        fb:c_line(adjx(i), adjy(80 - 0.35), adjx(i), adjy(80 + 0.35), 0)
-    end
-
-    for i = -60, 60, 10 do
-        fb:c_line(adjx(i), adjy(90 - 0.35), adjx(i), adjy(90 + 0.35), 0)
-        fb:c_line(adjx(i), adjy(100 - 0.35), adjx(i), adjy(100 + 0.35), 0)
+    --step 1mil, tree
+    local W = 20
+    for y = 10, 100, 20 do
+        for x = -W, W, 10 do
+            fb:c_line(adjx(x), adjy(y - 0.35), adjx(x), adjy(y + 0.35), 0)
+            fb:c_line(adjx(x), adjy(y + 10 - 0.35), adjx(x), adjy(y + 10 + 0.35), 0)
+        end
+        W = W + 10
     end
 
     return fb:to_bmp()

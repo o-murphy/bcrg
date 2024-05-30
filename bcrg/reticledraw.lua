@@ -6,8 +6,8 @@ ReticleDraw.__index = ReticleDraw
 
 function ReticleDraw:new(buf, width, height, buf_format, stride)
     -- Ensure width and height are integers
-    width = math.floor(width)
-    height = math.floor(height)
+    width = math.floor(width)  -- Maybe ceil
+    height = math.floor(height)  -- Maybe ceil
 
     local self = FrameBuffer.new(self, buf, width, height, buf_format, stride)
     self.cx = self.width // 2

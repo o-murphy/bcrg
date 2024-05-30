@@ -301,22 +301,46 @@ function FrameBuffer:to_bmp()
     end
 
     local function get_bmp_header(width, height, filesize)
-        local fileHeader = {66, 77} -- "BM"
-        for _, v in ipairs(int_to_bytes(filesize, 4)) do table.insert(fileHeader, v) end
-        for _, v in ipairs({0, 0, 0, 0}) do table.insert(fileHeader, v) end
-        for _, v in ipairs(int_to_bytes(54, 4)) do table.insert(fileHeader, v) end
+        local fileHeader = { 66, 77 } -- "BM"
+        for _, v in ipairs(int_to_bytes(filesize, 4)) do
+            table.insert(fileHeader, v)
+        end
+        for _, v in ipairs({ 0, 0, 0, 0 }) do
+            table.insert(fileHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(54, 4)) do
+            table.insert(fileHeader, v)
+        end
 
         local dibHeader = {}
-        for _, v in ipairs(int_to_bytes(40, 4)) do table.insert(dibHeader, v) end
-        for _, v in ipairs(int_to_bytes(width, 4)) do table.insert(dibHeader, v) end
-        for _, v in ipairs(int_to_bytes(height, 4)) do table.insert(dibHeader, v) end
-        for _, v in ipairs(int_to_bytes(1, 2)) do table.insert(dibHeader, v) end
-        for _, v in ipairs(int_to_bytes(24, 2)) do table.insert(dibHeader, v) end
-        for _, v in ipairs({0, 0, 0, 0}) do table.insert(dibHeader, v) end
-        for _, v in ipairs(int_to_bytes(filesize - 54, 4)) do table.insert(dibHeader, v) end
-        for _, v in ipairs({19, 11, 0, 0, 19, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}) do table.insert(dibHeader, v) end
+        for _, v in ipairs(int_to_bytes(40, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(width, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(height, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(1, 2)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(24, 2)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs({ 0, 0, 0, 0 }) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(filesize - 54, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs({ 19, 11, 0, 0, 19, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }) do
+            table.insert(dibHeader, v)
+        end
 
-        for _, v in ipairs(dibHeader) do table.insert(fileHeader, v) end
+        for _, v in ipairs(dibHeader) do
+            table.insert(fileHeader, v)
+        end
         return fileHeader
     end
 
@@ -326,7 +350,7 @@ function FrameBuffer:to_bmp()
             for x = 0, fb.width - 1 do
                 local color
                 if fb.format == MVLSBFormat then
-                    color = fb:pixel(x, y) == 1 and {255, 255, 255} or {0, 0, 0}
+                    color = fb:pixel(x, y) == 1 and { 255, 255, 255 } or { 0, 0, 0 }
                 elseif fb.format == RGB565Format then
                     local color565 = fb:pixel(x, y)
                     color = {
@@ -352,11 +376,182 @@ function FrameBuffer:to_bmp()
     local bmp_header = get_bmp_header(self.width, self.height, filesize)
     local bmp_data = {}
 
-    for _, v in ipairs(bmp_header) do table.insert(bmp_data, v) end
-    for _, v in ipairs(pixel_data) do table.insert(bmp_data, v) end
+    for _, v in ipairs(bmp_header) do
+        table.insert(bmp_data, v)
+    end
+    for _, v in ipairs(pixel_data) do
+        table.insert(bmp_data, v)
+    end
 
     return bmp_data
 end
 
+function FrameBuffer:ellipse(x0, y0, a, b, color)
+    local x = 0
+    local y = b
+    local a2 = a * a
+    local b2 = b * b
+    local crit1 = -(a2 / 4 + a % 2 + b2)
+    local crit2 = -(b2 / 4 + b % 2 + a2)
+    local crit3 = -(b2 / 4 + b % 2)
+    local t = -a2 * y
+    local dxt = 2 * b2 * x
+    local dyt = -2 * a2 * y
+    local d2xt = 2 * b2
+    local d2yt = 2 * a2
+
+    while y >= 0 and x <= a do
+        self:pixel(x0 + x, y0 + y, color)
+        self:pixel(x0 - x, y0 + y, color)
+        self:pixel(x0 + x, y0 - y, color)
+        self:pixel(x0 - x, y0 - y, color)
+        if t + b2 * x <= crit1 or t + a2 * y <= crit3 then
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+        elseif t - a2 * y > crit2 then
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        else
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        end
+    end
+end
+
+function FrameBuffer:fill_ellipse_by_center(cx, cy, rx, ry, color)
+    local x = 0
+    local y = ry
+    local rx2 = rx * rx
+    local ry2 = ry * ry
+    local crit1 = -(rx2 / 4 + rx % 2 + ry2)
+    local crit2 = -(ry2 / 4 + ry % 2 + rx2)
+    local crit3 = -(ry2 / 4 + ry % 2)
+    local t = -rx2 * y
+    local dxt = 2 * ry2 * x
+    local dyt = -2 * rx2 * y
+    local d2xt = 2 * ry2
+    local d2yt = 2 * rx2
+
+    while y >= 0 and x <= rx do
+        for i = cx - x, cx + x do
+            self:pixel(i, cy + y, color)
+            self:pixel(i, cy - y, color)
+        end
+        if t + ry2 * x <= crit1 or t + rx2 * y <= crit3 then
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+        elseif t - rx2 * y > crit2 then
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        else
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        end
+    end
+end
+
+function FrameBuffer:ellipse_by_center(cx, cy, rx, ry, color)
+    local x = 0
+    local y = ry
+    local rx2 = rx * rx
+    local ry2 = ry * ry
+    local crit1 = -(rx2 / 4 + rx % 2 + ry2)
+    local crit2 = -(ry2 / 4 + ry % 2 + rx2)
+    local crit3 = -(ry2 / 4 + ry % 2)
+    local t = -rx2 * y
+    local dxt = 2 * ry2 * x
+    local dyt = -2 * rx2 * y
+    local d2xt = 2 * ry2
+    local d2yt = 2 * rx2
+
+    while y >= 0 and x <= rx do
+        self:pixel(cx + x, cy + y, color)
+        self:pixel(cx - x, cy + y, color)
+        self:pixel(cx + x, cy - y, color)
+        self:pixel(cx - x, cy - y, color)
+        if t + ry2 * x <= crit1 or t + rx2 * y <= crit3 then
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+        elseif t - rx2 * y > crit2 then
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        else
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        end
+    end
+end
+
+function FrameBuffer:polyline(points, color)
+    if not points or #points < 2 then
+        error("Invalid points table passed to polyline method")
+    end
+
+    for i = 1, #points - 1 do
+        local p1 = points[i]
+        local p2 = points[i + 1]
+        self:line(p1[1], p1[2], p2[1], p2[2], color)
+    end
+    -- Close the polygon by connecting the last point to the first
+    local p1 = points[#points]
+    local p2 = points[1]
+    self:line(p1[1], p1[2], p2[1], p2[2], color)
+end
+
+
+function FrameBuffer:polygon(points, color)
+    -- Draw the edges of the polygon
+    self:polyline(points, color)
+
+    -- Fill the polygon using scanline fill algorithm
+    local minY = math.huge
+    local maxY = -math.huge
+
+    for _, p in ipairs(points) do
+        if p[2] < minY then minY = p[2] end
+        if p[2] > maxY then maxY = p[2] end
+    end
+
+    for y = minY, maxY do
+        local nodes = {}
+
+        local j = #points
+        for i = 1, #points do
+            local pi = points[i]
+            local pj = points[j]
+            if (pi[2] < y and pj[2] >= y) or (pj[2] < y and pi[2] >= y) then
+                local x = pi[1] + (y - pi[2]) / (pj[2] - pi[2]) * (pj[1] - pi[1])
+                table.insert(nodes, x)
+            end
+            j = i
+        end
+
+        table.sort(nodes)
+
+        for i = 1, #nodes - 1, 2 do
+            for x = math.floor(nodes[i]), math.floor(nodes[i + 1]) do
+                self:pixel(x, y, color)
+            end
+        end
+    end
+end
 
 return FrameBuffer

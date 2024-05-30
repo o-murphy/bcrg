@@ -49,6 +49,20 @@ function make_bmp(width, height, bit_depth)
     -- Draw a black rectangle (0 for 1-bit, 0 for 8-bit, etc.) at position (100, 100) with width 200 and height 150
     fb:c_fill_rect(0, 0, 200, 100, 0)
 
+    fb:c_fill_circle(0, 0, 20, 1)
+
+    local points = {
+        { 10, 10 },
+        { 20, 30 },
+        { 30, 10 },
+        { 40, 30 },
+        { 50, 10 }
+    }
+
+    fb:polygon(points, 0)
+
+    fb:hline(-0.0000000001, 0, 10, 0)
+
     -- Return the buffer data as a bytearray
     return fb:to_bmp()
 end

@@ -46,9 +46,14 @@ if __name__ == '__main__':
     #     width, height,1    )
 
     bmp_bytearray = LuaReticleLoader('mrad.lua').make_reticle(
-        640, 640, 1.42,
-        1.42, 1, None,
-        None, None
+        640,
+        640,
+        1.4,
+        1.4,
+        1,
+        None,
+        None,
+        None
     )
 
     # Save the bytearray to a BMP file

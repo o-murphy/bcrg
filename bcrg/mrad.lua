@@ -63,7 +63,7 @@ function make_reticle(width, height, click_x, click_y, zoom, min_x_step, min_y_s
         end
     end
 
-    if ax <= 1.4 then
+    if ax <= 0.6 then
 
         for i = 2.5, 20, 2.5 do
             fb:c_pixel(adjx(i), adjy(10), 0, 0)
@@ -114,28 +114,28 @@ function make_reticle(width, height, click_x, click_y, zoom, min_x_step, min_y_s
     end
 
     for i = -20, 20, 10 do
-        fb:c_line(adjx(i), adjy(10 - 0.5), adjx(i), adjy(10 + 0.4), 0)
-        fb:c_line(adjx(i), adjy(20 - 0.5), adjx(i), adjy(20 + 0.4), 0)
+        fb:c_line(adjx(i), adjy(10 - 0.35), adjx(i), adjy(10 + 0.35), 0)
+        fb:c_line(adjx(i), adjy(20 - 0.35), adjx(i), adjy(20 + 0.35), 0)
     end
 
     for i = -30, 30, 10 do
-        fb:c_line(adjx(i), adjy(30 - 0.5), adjx(i), adjy(30 + 0.4), 0)
-        fb:c_line(adjx(i), adjy(40 - 0.5), adjx(i), adjy(40 + 0.4), 0)
+        fb:c_line(adjx(i), adjy(30 - 0.35), adjx(i), adjy(30 + 0.35), 0)
+        fb:c_line(adjx(i), adjy(40 - 0.35), adjx(i), adjy(40 + 0.35), 0)
     end
 
     for i = -40, 40, 10 do
-        fb:c_line(adjx(i), adjy(50 - 0.5), adjx(i), adjy(50 + 0.4), 0)
-        fb:c_line(adjx(i), adjy(60 - 0.5), adjx(i), adjy(60 + 0.4), 0)
+        fb:c_line(adjx(i), adjy(50 - 0.35), adjx(i), adjy(50 + 0.35), 0)
+        fb:c_line(adjx(i), adjy(60 - 0.35), adjx(i), adjy(60 + 0.35), 0)
     end
 
     for i = -50, 50, 10 do
-        fb:c_line(adjx(i), adjy(70 - 0.5), adjx(i), adjy(70 + 0.4), 0)
-        fb:c_line(adjx(i), adjy(80 - 0.5), adjx(i), adjy(80 + 0.4), 0)
+        fb:c_line(adjx(i), adjy(70 - 0.35), adjx(i), adjy(70 + 0.35), 0)
+        fb:c_line(adjx(i), adjy(80 - 0.35), adjx(i), adjy(80 + 0.35), 0)
     end
 
     for i = -60, 60, 10 do
-        fb:c_line(adjx(i), adjy(90 - 0.5), adjx(i), adjy(90 + 0.4), 0)
-        fb:c_line(adjx(i), adjy(100 - 0.5), adjx(i), adjy(100 + 0.4), 0)
+        fb:c_line(adjx(i), adjy(90 - 0.35), adjx(i), adjy(90 + 0.35), 0)
+        fb:c_line(adjx(i), adjy(100 - 0.35), adjx(i), adjy(100 + 0.35), 0)
     end
 
     return fb:to_bmp()

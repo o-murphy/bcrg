@@ -6,8 +6,8 @@ ReticleDraw.__index = ReticleDraw
 
 function ReticleDraw:new(buf, width, height, buf_format, stride)
     -- Ensure width and height are integers
-    width = math.floor(width)  -- Maybe ceil
-    height = math.floor(height)  -- Maybe ceil
+    width = math.ceil(width)  -- Maybe ceil
+    height = math.ceil(height)  -- Maybe ceil
 
     local self = FrameBuffer.new(self, buf, width, height, buf_format, stride)
     self.cx = self.width // 2
@@ -28,7 +28,7 @@ function ReticleDraw:c_fill_rect(x, y, width, height, color)
 end
 
 function ReticleDraw:c_pixel(x, y, color)
-    self:pixel(math.ceil(self.cx + x), math.ceil(self.cy + y), color)
+    self:pixel(self.cx + x, self.cy + y, color)
 end
 
 function ReticleDraw:c_hline(x, y, width, color)
@@ -67,10 +67,10 @@ end
 
 function ReticleDraw:c_line(x0, y0, x1, y1, color)
     self:line(
-            math.ceil(self.cx + x0),
-            math.ceil(self.cy + y0),
-            math.ceil(self.cx + x1),
-            math.ceil(self.cy + y1),
+            self.cx + x0,
+            self.cy + y0,
+            self.cx + x1,
+            self.cy + y1,
             color
     )
 end

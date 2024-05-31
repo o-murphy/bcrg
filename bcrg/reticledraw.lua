@@ -49,16 +49,17 @@ function ReticleDraw:c_vline(x, y, height, color)
     )
 end
 
-function ReticleDraw:c_rect(x, y, width, height, color)
-    self:rect(
-            (self.cx + x) - (width // 2),
-            (self.cy + y) - (height // 2),
-            width, height, color
-    )
+function ReticleDraw:true_rect(x, y, width, height, color)
+    self:line(x, y, x + width - 1, y, color)
+    self:line(x, y, x, y + height - 1, color)
+    self:line(x, y + height - 1, x + width - 1, y + height - 1, color)
+    self:line(x + width - 1, y + height - 1, x + width - 1, y, color)
 end
 
+
 function ReticleDraw:c_rect(x, y, width, height, color)
-    self:rect(
+    print((width // 2))
+    self:true_rect(
             (self.cx + x) - (width // 2),
             (self.cy + y) - (height // 2),
             width, height, color

@@ -44,7 +44,7 @@ function ReticleDraw:c_vline(x, y, height, color)
     self:vline(
             (self.cx + x),
             (self.cy + y),
-            width,
+            height,
             color
     )
 end
@@ -111,4 +111,111 @@ function make_canvas(width, height, bit_depth)
     -- Initialize the frame buffer
     local fb = ReticleDraw:new(buf, width, height, bit_depth == 1 and MVLSB or NMLSB)
     return fb
+end
+
+
+function FrameBuffer:to_bmp_1bit()
+    local function int_to_bytes(n, bytes)
+        local res = {}
+        for i = 1, bytes do
+            res[i] = n % 256
+            n = math.floor(n / 256)
+        end
+        return res
+    end
+
+    local function get_bmp_header(width, height, filesize, depth)
+        local fileHeader = { 66, 77 } -- "BM"
+        for _, v in ipairs(int_to_bytes(filesize, 4)) do
+            table.insert(fileHeader, v)
+        end
+        for _, v in ipairs({ 0, 0, 0, 0 }) do
+            table.insert(fileHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(54 + (depth == 1 and 8 or 0), 4)) do
+            table.insert(fileHeader, v)
+        end
+
+        local dibHeader = {}
+        for _, v in ipairs(int_to_bytes(40, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(width, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(height, 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(1, 2)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(depth, 2)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs({ 0, 0, 0, 0 }) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs(int_to_bytes(filesize - 54 - (depth == 1 and 8 or 0), 4)) do
+            table.insert(dibHeader, v)
+        end
+        for _, v in ipairs({ 19, 11, 0, 0, 19, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }) do
+            table.insert(dibHeader, v)
+        end
+
+        if depth == 1 then
+            -- Color palette for 1-bit BMP (black and white)
+            table.insert(dibHeader, 0) -- black
+            table.insert(dibHeader, 0)
+            table.insert(dibHeader, 0)
+            table.insert(dibHeader, 0)
+            table.insert(dibHeader, 255) -- white
+            table.insert(dibHeader, 255)
+            table.insert(dibHeader, 255)
+            table.insert(dibHeader, 0)
+        end
+
+        for _, v in ipairs(dibHeader) do
+            table.insert(fileHeader, v)
+        end
+        return fileHeader
+    end
+
+    local function get_pixel_data_1bit(fb)
+        local pixel_data = {}
+        local row_padding = (4 - math.ceil(fb.width / 8) % 4) % 4
+        for y = fb.height - 1, 0, -1 do
+            local row = {}
+            for x = 0, fb.width - 1, 8 do
+                local byte = 0
+                for bit = 0, 7 do
+                    if x + bit < fb.width then
+                        local color = fb:pixel(x + bit, y)
+                        byte = byte + (color == 1 and 1 or 0) * 2 ^ (7 - bit)
+                    end
+                end
+                table.insert(row, byte)
+            end
+            for _, v in ipairs(row) do
+                table.insert(pixel_data, v)
+            end
+            for _ = 1, row_padding do
+                table.insert(pixel_data, 0)
+            end
+        end
+        return pixel_data
+    end
+
+    local pixel_data = get_pixel_data_1bit(self)
+    local filesize = 54 + 8 + #pixel_data
+    local bmp_header = get_bmp_header(self.width, self.height, filesize, 1)
+    local bmp_data = {}
+
+    for _, v in ipairs(bmp_header) do
+        table.insert(bmp_data, v)
+    end
+    for _, v in ipairs(pixel_data) do
+        table.insert(bmp_data, v)
+    end
+
+    return bmp_data
 end

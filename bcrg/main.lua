@@ -64,5 +64,6 @@ function make_bmp(width, height, bit_depth)
     fb:hline(-0.0000000001, 0, 10, 0)
 
     -- Return the buffer data as a bytearray
+    --return fb:to_bmp()
     return fb:to_bmp()
 end

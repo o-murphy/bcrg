@@ -147,11 +147,11 @@ def bits_to_byte(bit_string):
 
 # Example bit data for a character
 bit_data = [
-    '000111',
+    '100111',
     '100101',
     '100101',
-    '010101',
-    '001111',
+    '100101',
+    '111101',
     '000000',
 ]
 

@@ -47,14 +47,14 @@ if __name__ == '__main__':
     bmp_bytearray = LuaReticleLoader('mrad.lua').make_reticle(
         640,
         640,
-        1.42,
-        1.42,
-        2,
+        2.27,
+        2.27,
+        4,
         None
     )
 
     # Save the bytearray to a BMP file
-    with open("mrad.bmp", "wb") as bmp_file:
+    with open("../assets/mrad.bmp", "wb") as bmp_file:
         bmp_file.write(bmp_bytearray)
 
     print("BMP file created successfully!")

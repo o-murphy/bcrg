@@ -8,7 +8,7 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
 
     local ax = click_x / zoom
     local ay = click_y / zoom
-    print(ax, ay)  -- for debug only
+    --print(ax, ay)  -- for debug only
 
     local function round(v)
         if v < 0 then

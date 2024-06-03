@@ -139,7 +139,7 @@ def get_char_data(char):
         print(row)
 
 
-get_char_data("A")
+# get_char_data("A")
 
 
 def bits_to_byte(bit_string):
@@ -147,11 +147,11 @@ def bits_to_byte(bit_string):
 
 # Example bit data for a character
 bit_data = [
-    '100111',
-    '100101',
-    '100101',
-    '100101',
-    '111101',
+    '000000',
+    '100010',
+    '010100',
+    '001000',
+    '000000',
     '000000',
 ]
 

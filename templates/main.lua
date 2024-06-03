@@ -1,5 +1,4 @@
 -- Load the framebuffer module
-require("framebuffer")
 require("reticledraw")
 
 -- Function to create a framebuffer, fill it with white, and draw a black rectangle

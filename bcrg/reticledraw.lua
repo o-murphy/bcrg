@@ -1,5 +1,5 @@
 -- Load the framebuffer module
-require("framebuffer")
+require("framebuf")
 
 ReticleDraw = setmetatable({}, { __index = FrameBuffer })
 ReticleDraw.__index = ReticleDraw
@@ -111,6 +111,11 @@ function make_canvas(width, height, bit_depth)
     -- Initialize the frame buffer
     local fb = ReticleDraw:new(buf, width, height, bit_depth == 1 and MVLSB or NMLSB)
     return fb
+end
+
+
+function FrameBuffer:get_buffer()
+    return self.buf
 end
 
 

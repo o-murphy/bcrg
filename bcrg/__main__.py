@@ -1,59 +1,113 @@
-from bcrg.bcrg import LuaReticleLoader
 import argparse
+import io
+import os
+import sys
+import zipfile
+from pathlib import Path
+
+from bcrg import LuaReticleLoader
+
+
+def store_to_zip(file_data_dict, output_filename):
+    with io.BytesIO() as byte_stream:
+        with zipfile.ZipFile(byte_stream, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for filename, data in file_data_dict.items():
+                zipf.writestr(filename, data)
+
+        # Write the in-memory ZIP archive to a file
+        with open(output_filename, 'wb') as f:
+            f.write(byte_stream.getvalue())
+
+
+def store_to_dir(file_data_dict, output_dirname):
+    os.makedirs(output_dirname, exist_ok=True)
+
+    for name, data in file_data_dict.items():
+        # Save the bytearray to a BMP file
+        with open(Path(output_dirname, name), "wb") as bmp_file:
+            bmp_file.write(data)
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="bcr")
-    parser.add_argument("file", action='store')
-    parser.add_argument('-o', '--output', action='store', required=True)
-    parser.add_argument('-wh', '--width', action='store',
+
+    def is_dir(string):
+        if Path(string).is_dir():
+            return string
+        else:
+            parser.error(f"'{string}' is not a valid output path")
+
+    def is_ext_exp(extensions):
+        def check_extension(filename):
+            if Path(filename).is_dir():
+                parser.error(f"Expected file, but '{filename}' is dir")
+            if not Path(filename).is_file():
+                parser.error(f"File not found '{filename}'")
+
+            ext = Path(filename).suffix.lower()
+
+            if ext not in extensions:
+                parser.error(f"File doesn't have one of the expected extensions: {', '.join(extensions)}")
+            return filename
+
+        return check_extension
+
+    parser = argparse.ArgumentParser(prog="bcr", exit_on_error=False)
+    # parser.add_argument("file", action='store', type=argparse.FileType('r'),
+    parser.add_argument("file", action='store', type=is_ext_exp({'.lua'}),
+                        help="Reticle template file in .lua format")
+    parser.add_argument('-o', '--output', action='store', type=is_dir, default="./",
+                        help="Output directory path, defaults to ./")
+    parser.add_argument('-W', '--width', action='store', default=640,
                         help="Canvas width (px)", type=int, metavar="<int>")
-    parser.add_argument('-ht', '--height', action='store',
+    parser.add_argument('-H', '--height', action='store', default=640,
                         help="Canvas height (px)", type=int, metavar="<int>")
     parser.add_argument('-cx', '--click-x', action='store',
                         help="Horizontal click size (cm/100m)", type=float, metavar="<float>")
     parser.add_argument('-cy', '--click-y', action='store',
                         help="Vertical click size (cm/100m)", type=float, metavar="<float>")
-    parser.add_argument('-z', '--zoom', action='store', default=1,
+    parser.add_argument('-z', '--zoom', nargs="*", default=[1, 2, 3, 4, 6],
                         help="Zoom value (int)", type=int, metavar="<int>")
-    # parser.add_argument('-b', '--background', action='store',
-    #                     help="Change background color")
-    # parser.add_argument('-inv', '--invert', action='store_true',
-    #                     default=False, help="Invert colors")
-    # parser.add_argument('-bw', '--black-n-white', action='store_true',
-    #                     default=False, help="Black and white")
+    parser.add_argument('-Z', '--zip', action="store_true", default=False,
+                        help="Store as .zip")
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     args = parser.parse_args()
-    in_file = args.file
-    out_file = args.output
-    # fill_color = args.background
-    # invert_colors = args.invert
-    # black_n_white = args.black_n_white
-    click_x, click_y = args.click_x, args.click_y
-    if not click_x and not click_y:
-        click_x, click_y = 0.5, 0.5
-    elif not click_x:
-        click_x = click_y
-    elif not click_y:
-        click_y = click_x
-    zoom = args.zoom
-    w, h = args.width, args.height
 
-    bmp_bytearray = LuaReticleLoader(in_file).make_reticle(
-        w,
-        h,
-        click_x,
-        click_y,
-        zoom,
-        None
-    )
+    cx, cy = args.click_x, args.click_y
+    if not cx and not cy:
+        cx, cy = 0.5, 0.5
+    elif not cx:
+        cx = cy
+    elif not cy:
+        cy = cx
 
-    # Save the bytearray to a BMP file
-    with open(out_file, "wb") as bmp_file:
-        bmp_file.write(bmp_bytearray)
+    loader = LuaReticleLoader(args.file)
+
+    stem = Path(args.file).stem
+    out_dir = f"{stem}_{cx}x{cy}"
+
+    zip_arr = {}
+
+    try:
+        for z in args.zoom:
+            bmp_bytearray = loader.make_bmp(
+                args.width, args.height, cx, cy, z, None
+            )
+            out_file_name = f"{z}.bmp"
+
+            zip_arr[out_file_name] = bmp_bytearray
+
+        if args.zip:
+            store_to_zip(zip_arr, f"{out_dir}.zip")
+        else:
+            store_to_dir(zip_arr, Path(args.output, out_dir))
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
     main()
-
-

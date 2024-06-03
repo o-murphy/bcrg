@@ -43,4 +43,4 @@ dependencies = [
 packages = ["bcrg"]
 
 [project.scripts]
-ymodem = "bcrg.__main__:main"
+bcrg = "bcrg.__main__:main"

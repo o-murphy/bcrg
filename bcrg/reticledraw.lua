@@ -58,7 +58,7 @@ end
 
 
 function ReticleDraw:c_rect(x, y, width, height, color)
-    print((width // 2))
+    --print((width // 2))
     self:true_rect(
             (self.cx + x) - (width // 2),
             (self.cy + y) - (height // 2),

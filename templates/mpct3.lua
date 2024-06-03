@@ -49,15 +49,22 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     fb:c_line(0, _y(-2), 0, _y(-40), BLACK)
     fb:c_line(0, _y(2), 0, _y(140), BLACK)
 
-    fb:text("MCPT3", fb.width//6, fb.height//5, BLACK)
-
+    fb:text("MCPT3", fb.width // 6, fb.height // 5, BLACK)
+    print(ax, ay)
     function prect(x, y)
-        fb:c_ellipse(_x(x), _y(y),  _x(F/4), _y(F/4), BLACK)
-        --fb:c_circle(_x(x), _y(y), _x(F/4)-1, WHITE)
-        fb:c_rect(_x(x), _y(y), _x(F/4), _y(F/4), WHITE)
-        --fb:c_circle(_x(x), _y(y), 3, 3, BLACK)
-        --fb:c_rect(_x(x), _y(y), 3, 3, BLACK)
-        --fb:c_pixel(_x(x), _y(y), WHITE)
+        if ax <= 0.5 and ay <= 0.5 then
+            fb:c_ellipse(_x(x), _y(y), _x(F / 4), _y(F / 4), BLACK)
+            --fb:c_circle(_x(x), _y(y), _x(F/4)-1, WHITE)
+            fb:c_rect(_x(x), _y(y), _x(F / 4), _y(F / 4), WHITE)
+            --fb:c_circle(_x(x), _y(y), 3, 3, BLACK)
+            --fb:c_rect(_x(x), _y(y), 3, 3, BLACK)
+            --fb:c_pixel(_x(x), _y(y), WHITE)
+        elseif ax <= 0.9 and ay <= 0.9 then
+            fb:c_rect(_x(x), _y(y), 3, 3, BLACK)
+            fb:c_pixel(_x(x), _y(y), WHITE)
+        else
+            fb:c_pixel(_x(x), _y(y), BLACK)
+        end
     end
 
     for x = 10, 80, 10 do
@@ -104,15 +111,19 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     end
 
     function horgr(x)
-        fb:c_line(_x(x + 2), 0, _x(x + 2), _y(1), BLACK)
-        fb:c_line(_x(x + 8), 0, _x(x + 8), _y(1), BLACK)
-        fb:c_line(_x(x + 4), 0, _x(x + 4), _y(1.33), BLACK)
-        fb:c_line(_x(x + 6), 0, _x(x + 6), _y(1.33), BLACK)
+        if ay <= 0.9 then
+            fb:c_line(_x(x + 2), 0, _x(x + 2), _y(1), BLACK)
+            fb:c_line(_x(x + 8), 0, _x(x + 8), _y(1), BLACK)
+            fb:c_line(_x(x + 4), 0, _x(x + 4), _y(1.33), BLACK)
+            fb:c_line(_x(x + 6), 0, _x(x + 6), _y(1.33), BLACK)
+        end
     end
 
     function horgr40(x)
-        fb:c_line(_x(x + 4), 0, _x(x + 4), _y(1), BLACK)
-        fb:c_line(_x(x + 6), 0, _x(x + 6), _y(1), BLACK)
+        if ay <= 0.9 then
+            fb:c_line(_x(x + 4), 0, _x(x + 4), _y(1), BLACK)
+            fb:c_line(_x(x + 6), 0, _x(x + 6), _y(1), BLACK)
+        end
     end
 
     for x = 10, 30, 10 do
@@ -154,29 +165,37 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
         fb:c_line(_x(-H / 2), _y(y + 8), _x(H / 2), _y(y + 8), BLACK)
     end
 
-    for y = -40, 130, 10 do
-        vert(y)
+    if ax <= 0.9 then
+        for y = -40, 130, 10 do
+            vert(y)
+        end
     end
 
     function hdotsplus(x, y)
-        fb:c_pixel(_x(x + 2), _y(y), BLACK)
-        fb:c_pixel(_x(x + 4), _y(y), BLACK)
-        fb:c_pixel(_x(x + 6), _y(y), BLACK)
-        fb:c_pixel(_x(x + 8), _y(y), BLACK)
+        if ax <= 0.9 then
+            fb:c_pixel(_x(x + 2), _y(y), BLACK)
+            fb:c_pixel(_x(x + 4), _y(y), BLACK)
+            fb:c_pixel(_x(x + 6), _y(y), BLACK)
+            fb:c_pixel(_x(x + 8), _y(y), BLACK)
+        end
     end
 
     function hdotsminus(x, y)
-        fb:c_pixel(_x(x - 2), _y(y), BLACK)
-        fb:c_pixel(_x(x - 4), _y(y), BLACK)
-        fb:c_pixel(_x(x - 6), _y(y), BLACK)
-        fb:c_pixel(_x(x - 8), _y(y), BLACK)
+        if ax <= 0.9 then
+            fb:c_pixel(_x(x - 2), _y(y), BLACK)
+            fb:c_pixel(_x(x - 4), _y(y), BLACK)
+            fb:c_pixel(_x(x - 6), _y(y), BLACK)
+            fb:c_pixel(_x(x - 8), _y(y), BLACK)
+        end
     end
 
     function vdots(x, y)
-        fb:c_pixel(_x(x), _y(y + 2), BLACK)
-        fb:c_pixel(_x(x), _y(y + 4), BLACK)
-        fb:c_pixel(_x(x), _y(y + 6), BLACK)
-        fb:c_pixel(_x(x), _y(y + 8), BLACK)
+        if ax <= 0.9 then
+            fb:c_pixel(_x(x), _y(y + 2), BLACK)
+            fb:c_pixel(_x(x), _y(y + 4), BLACK)
+            fb:c_pixel(_x(x), _y(y + 6), BLACK)
+            fb:c_pixel(_x(x), _y(y + 8), BLACK)
+        end
     end
 
     for x = 0, 10, 10 do
@@ -236,6 +255,13 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     fb:c_rect(_x(85) + fb.width / 2, 0, fb.width, _y(M), BLACK)
     fb:c_rect(_x(-85) - fb.width / 2, 0, fb.width, _y(M), BLACK)
     fb:c_rect(0, _y(145) + fb.height / 2, _x(M), fb.height, BLACK)
+
+    if ax <= 0.9 then
+        for x = 20, 100, 20 do
+            fb:c_text6(tostring(x // 10), _x(x), _y(-5), BLACK)
+            fb:c_text6(tostring(x // 10), _x(-x), _y(-5), BLACK)
+        end
+    end
 
     return fb:to_bmp_1bit()
 end

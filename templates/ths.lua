@@ -113,14 +113,15 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     end
 
     for r = 20, round(width / 2), 20 do
+        line_size = math.sqrt(2 * (2.5 ^ 2))
         for a = 45, 315, 180 do
             local x2, y2 = point(r * rate, a)
             --fb:c_circle(round(x2), round(y2), 2, BLACK)
             fb:c_line(
-                    _x(x2 + 3.5355 / 2 * rate),
-                    _y(y2 + 3.5355 / 2 * rate),
-                    _x(x2 - 3.5355 / 2 * rate),
-                    _y(y2 - 3.5355 / 2 * rate),
+                    _x(x2 + line_size / 2 * rate),
+                    _y(y2 + line_size / 2 * rate),
+                    _x(x2 - line_size / 2 * rate),
+                    _y(y2 - line_size / 2 * rate),
                     BLACK
             )
         end
@@ -128,10 +129,10 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
             local x2, y2 = point(r * rate, a)
             --fb:c_circle(round(x2), round(y2), 2, BLACK)
             fb:c_line(
-                    _x(x2 - 3.5355 / 2 * rate),
-                    _y(y2 + 3.5355 / 2 * rate),
-                    _x(x2 + 3.5355 / 2 * rate),
-                    _y(y2 - 3.5355 / 2 * rate),
+                    _x(x2 - line_size / 2 * rate),
+                    _y(y2 + line_size / 2 * rate),
+                    _x(x2 + line_size / 2 * rate),
+                    _y(y2 - line_size / 2 * rate),
                     BLACK
             )
         end

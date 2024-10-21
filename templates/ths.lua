@@ -20,7 +20,8 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
 
     --local rate = 5.274 --MILs per 18 angle minute
     --local rate_cm = 51.777836626198464 --CmPer100M per 18 angle minute
-    local rate = 9.549
+    --local rate = 9.549
+    local rate = 10.666666666666667
 
     --local ths = 1 / 6000
     --local ths_in_cm = 10.41

@@ -5,9 +5,9 @@ local WHITE = 1
 
 local function round(v)
     if v < 0 then
-        return math.floor(v)
-    elseif v > 0 then
         return math.ceil(v)
+    elseif v > 0 then
+        return math.floor(v)
     else
         return 0
     end
@@ -31,10 +31,10 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     fb:fill(WHITE)
 
     -- main cross
-    fb:c_line(_x(1.25), 0, _x(100), 0, BLACK)
-    fb:c_line(_x(-1.25), 0, _x(-100), 0, BLACK)
-    fb:c_line(0, _y(1.25), 0, _y(100), 0, BLACK)
-    fb:c_line(0, _y(-1.25), 0, _y(-100), 0, BLACK)
+    fb:c_line(2, 0, _x(100), 0, BLACK)
+    fb:c_line(-2, 0, _x(-100), 0, BLACK)
+    fb:c_line(0, 2, 0, _y(100), 0, BLACK)
+    fb:c_line(0, -2, 0, _y(-100), 0, BLACK)
 
     local _step = (ax <= 2.01) and 10 or 20
 

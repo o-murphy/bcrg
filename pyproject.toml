@@ -1,15 +1,15 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "bcrg"
-version = "1.0.0"
+version = "1.0.1"
 
 description = "Ballistics reticle generator"
 
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 keywords = ["ballistics", "reticles", "lua", "luascript", "python", "python3"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -28,19 +28,22 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "lupa"
+    "lupa>=2.5",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/o-murphy/bcrg"
 "Bug Reports" = "https://github.com/o-murphy/bcrg/issues"
-#"Funding" = "https://donate.pypi.org"
-#"Say Thanks!" = ""
 "Source" = "https://github.com/o-murphy/bcrg"
 
 
 [tool.setuptools]
 packages = ["bcrg"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.0",
+]
 
 [project.scripts]
 bcrg = "bcrg.__main__:main"

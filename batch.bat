@@ -1,8 +1,8 @@
 @echo off
 
 REM Define variables for the output directory and input file
-set OUTPUT_DIR=.\ths+grid+zu23
-set INPUT_FILE=.\templates\ths+grid+zu23.lua
+set OUTPUT_DIR=.\ths+grid-v2
+set INPUT_FILE=.\templates\ths+grid-v2.lua
 
 REM Create directories
 mkdir %OUTPUT_DIR%\640x480

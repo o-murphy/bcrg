@@ -218,6 +218,8 @@ These methods automatically draw relative to the display center (`0,0`). **Alway
 | **`fb:c_circle(x, y, r, color)`** | Draws a circle outline. `r` is the radius in **pixels**. | `fb:c_circle(0, _y(30), 5, BLACK)` |
 | **`fb:c_fill_circle(x, y, r, color)`** | Draws a filled circle. | `fb:c_fill_circle(0, 0, 2, BLACK)` |
 | **`fb:c_text6(s, x, y, color)`** | Draws text using the **6x6** pixel font. | `fb:c_text6("10", _x(10), _y(-10), BLACK)` |
+| **`fb:c_arc(x, y, rx, ry, start_angle, end_angle, color)`** | Draws an arc from `start_angle` to `end_angle` (degrees, 0° = 12 o'clock). | `fb:c_arc(0, 0, 20, 20, 0, 90, BLACK)` |
+
 
 ### 📐 Inherited FrameBuffer Methods (Absolute Coordinates)
 
@@ -237,3 +239,4 @@ These methods require **absolute pixel coordinates** (`0,0` is the top-left corn
 | **`fb:ellipse(x, y, rx, ry, color)`** | Absolute | Draws an ellipse outline. |
 | **`fb:polygon(points, color)`** | Absolute | Draws a filled polygon. |
 | **`fb:text(s, x0, y0, col)`** | Absolute | Draws text using the standard **8x8** pixel font. |
+| **`fb:arc(cx, cy, rx, ry, start_angle, end_angle, color)`** | Absolute | Draws an arc. Angles in degrees, 0° = 12 o'clock. |

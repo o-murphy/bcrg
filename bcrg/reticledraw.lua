@@ -99,6 +99,18 @@ function ReticleDraw:c_text6(s, x, y, color)
     self:text6(s, self.cx + x - hw, self.cy + y - sh, color)
 end
 
+function ReticleDraw:c_arc(x, y, rx, ry, start_angle, end_angle, color)
+    self:arc(
+        self.cx + x, 
+        self.cy + y, 
+        rx, 
+        ry, 
+        start_angle, 
+        end_angle, 
+        color
+    )
+end
+
 function make_canvas(width, height, bit_depth)
     local buffer_size = (width * height * bit_depth) / 8
 

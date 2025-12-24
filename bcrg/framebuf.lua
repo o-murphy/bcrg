@@ -438,6 +438,76 @@ function FrameBuffer:polygon(points, color)
 end
 
 
+function FrameBuffer:arc(cx, cy, rx, ry, start_angle, end_angle, color)
+    -- Convert angles to radians
+
+    local function normalize_rad(rad)
+        local pi2 = 2 * math.pi
+        rad = rad % pi2
+        if rad < 0 then rad = rad + pi2 end
+        return rad
+    end
+
+    -- Convert angles to radians and normalize them
+    local start_rad = normalize_rad(math.rad(start_angle))
+    local end_rad = normalize_rad(math.rad(end_angle))
+    
+    -- Helper function to check if a point lies within the specified angular range
+    local function is_in_arc(x, y)
+        -- Calculate pixel angle relative to 12 o'clock position
+        -- math.atan(dx, -dy) sets 0 degrees at 12 o'clock
+        local angle = math.atan(x, -y)
+        
+        -- Normalize angle to [0, 2*PI] range
+        if angle < 0 then angle = angle + 2 * math.pi end
+        
+        -- Handle cases where the arc crosses the "North" (0/360) boundary
+        if start_rad <= end_rad then
+            return angle >= start_rad and angle <= end_rad
+        else
+            return angle >= start_rad or angle <= end_rad
+        end
+    end
+
+    local x = 0
+    local y = ry
+    local rx2 = rx * rx
+    local ry2 = ry * ry
+    local crit1 = -(rx2 / 4 + rx % 2 + ry2)
+    local crit2 = -(ry2 / 4 + ry % 2 + rx2)
+    local crit3 = -(ry2 / 4 + ry % 2)
+    local t = -rx2 * y
+    local dxt = 2 * ry2 * x
+    local dyt = -2 * rx2 * y
+    local d2xt = 2 * ry2
+    local d2yt = 2 * rx2
+
+    while y >= 0 and x <= rx do
+        -- Check each of the 4 symmetric points individually
+        if is_in_arc(x, y)   then self:pixel(cx + x, cy + y, color) end -- 4th quadrant
+        if is_in_arc(-x, y)  then self:pixel(cx - x, cy + y, color) end -- 3rd quadrant
+        if is_in_arc(x, -y)  then self:pixel(cx + x, cy - y, color) end -- 1st quadrant (12-3 o'clock)
+        if is_in_arc(-x, -y) then self:pixel(cx - x, cy - y, color) end -- 2nd quadrant (9-12 o'clock)
+
+        if t + ry2 * x <= crit1 or t + rx2 * y <= crit3 then
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+        elseif t - rx2 * y > crit2 then
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        else
+            x = x + 1
+            dxt = dxt + d2xt
+            t = t + dxt
+            y = y - 1
+            dyt = dyt + d2yt
+            t = t + dyt
+        end
+    end
+end
+
 
 -- Custom bitwise operations
 function bit_band(a, b)

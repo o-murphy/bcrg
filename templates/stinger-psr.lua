@@ -53,17 +53,22 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     local canoe_cx = brick_offset + brick_width + canoe_rx
     local canoe_cy = brick_y
 
+    -- Horizontal top lines
     fb:c_line(brick_offset, brick_y, brick_offset+brick_width, brick_y, BLACK)
     fb:c_line(-brick_offset, brick_y, -(brick_offset+brick_width), brick_y, BLACK)
 
-    fb:c_line(brick_offset, brick_y, brick_offset, fb.cx, BLACK)
-    fb:c_line(-brick_offset, brick_y, -brick_offset, fb.cy, BLACK)
+    -- Vertical lines
+    fb:c_line(brick_offset, brick_y, brick_offset, brick_y+canoe_ry, BLACK)
+    fb:c_line(-brick_offset, brick_y, -brick_offset, brick_y+canoe_ry, BLACK)
 
-    -- ПРАВА ДУГА (використовуємо c_arc, координати відносні центру)
+    -- Horizontal bootom line
+    fb:c_line(brick_offset, brick_y+canoe_ry, -brick_offset, brick_y+canoe_ry, BLACK)
+
+    -- RIGHT ARC (use c_arc, coordinates relative to center)
     -- x = canoe_cx, y = canoe_cy
     fb:c_arc(canoe_cx, canoe_cy, canoe_rx, canoe_ry, 90, 270, BLACK)
     
-    -- ЛІВА ДУГА (використовуємо c_arc, координати відносні центру)
+    -- LEFT ARC (use c_arc, coordinates are relative to center)
     -- x = -canoe_cx, y = canoe_cy
     fb:c_arc(-canoe_cx, canoe_cy, canoe_rx, canoe_ry, 90, 270, BLACK)
 

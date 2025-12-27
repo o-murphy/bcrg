@@ -28,8 +28,8 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "dearpygui>=2.1.0",
-    "lupa>=2.5",
+    "dearpygui>=2.1.1",
+    "lupa>=2.6",
 ]
 
 [project.urls]

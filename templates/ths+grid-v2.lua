@@ -19,6 +19,17 @@ local function round(v)
     end
 end
 
+-- helper: float range без акумуляції похибок
+local function frange(start, stop, step)
+    local t = {}
+    local v = start
+    while v < stop do
+        t[#t + 1] = v
+        v = start + #t * step  -- обчислюємо від start, а не v += step
+    end
+    return t
+end
+
 local function draw_dash(fb, rx, ry, a1, a2, color)
     local r1 = math.rad(a1)
     local r2 = math.rad(a2)
@@ -109,21 +120,17 @@ function make_reticle(width, height, click_x, click_y, zoom, adjustment)
     end
 
     if DASHED_CROSS then
-        local r_ = 2.5
-        local s_ = r_/2
-        for r = r_, round(width / 2), 5 do
+        local s_ = 2.5 / 2
+        for _, r in ipairs(frange(2.5, math.floor(width / 2), 5)) do
             fb:c_line(_x(r), _y(s_), _x(r), -_y(s_), BLACK)
             fb:c_line(_x(-r), _y(s_), _x(-r), -_y(s_), BLACK)
-
             fb:c_line(_x(s_), _y(r), -_x(s_), _y(r), BLACK)
             fb:c_line(_x(s_), _y(-r), -_x(s_), _y(-r), BLACK)
         end
 
-        local r_ = 1.25
-        for r = r_, round(width / 2), 2.5 do
+        for _, r in ipairs(frange(1.25, math.floor(width / 2), 2.5)) do
             fb:c_line(_x(r), 0, _x(r), 0, BLACK)
             fb:c_line(_x(-r), 0, _x(-r), 0, BLACK)
-
             fb:c_line(0, _y(r), 0, _y(r), BLACK)
             fb:c_line(0, _y(-r), 0, _y(-r), BLACK)
         end

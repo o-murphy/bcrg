@@ -7,6 +7,7 @@ import { Preview, type PreviewItem } from './components/Preview'
 import { ProgressBar } from './components/ProgressBar'
 import { ReticleEngine } from './lua/engine'
 import { bmpBytesToObjectUrl } from './lua/bmp'
+import { cacheKey, GenerationCache } from './lua/cache'
 import { TEMPLATE_LIBRARY } from './lua/templateLibrary'
 import { buildZip, downloadBlob, type ZoomResult } from './lua/zip'
 
@@ -77,6 +78,8 @@ export default function App() {
   flagsRef.current = flags
   const fileNameRef = useRef(fileName)
   fileNameRef.current = fileName
+  const cacheRef = useRef<GenerationCache | null>(null)
+  if (!cacheRef.current) cacheRef.current = new GenerationCache()
 
   useEffect(() => {
     const engine = engineRef.current!
@@ -84,25 +87,32 @@ export default function App() {
       .init()
       .then(() => setEngineReady(true))
       .catch((e) => setError(`Failed to initialize Lua VM: ${String(e)}`))
-    return () => engine.close()
-  }, [])
-
-  useEffect(() => {
     return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p.objectUrl))
+      engine.close()
+      cacheRef.current?.clear()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function runCompileAndGenerate(source: string) {
     const runId = ++runIdRef.current
+    const flagsNow = flagsRef.current
+    const key = cacheKey(source, flagsNow)
+
+    const cached = cacheRef.current!.get(key)
+    if (cached) {
+      setPreviews(cached.previews)
+      setActiveZoom(FIXED_ZOOMS[0])
+      setZipResults(cached.zip)
+      setCompileError(null)
+      return
+    }
+
     setIsCompiling(true)
     try {
       const engine = engineRef.current!
       await engine.loadTemplate(source, fileNameRef.current ?? 'template.lua')
       if (runIdRef.current !== runId) return
 
-      const flagsNow = flagsRef.current
       const clickX = parseClickValue(flagsNow.clickX)
       const clickY = parseClickValue(flagsNow.clickY)
 
@@ -125,14 +135,18 @@ export default function App() {
         // yield to the browser so the progress update actually paints
         // between synchronous (and fairly heavy) wasm calls
         await new Promise((resolve) => requestAnimationFrame(resolve))
-        if (runIdRef.current !== runId) return
+        if (runIdRef.current !== runId) {
+          nextPreviews.forEach((p) => URL.revokeObjectURL(p.objectUrl))
+          return
+        }
       }
 
-      if (runIdRef.current !== runId) return
-      setPreviews((old) => {
-        old.forEach((p) => URL.revokeObjectURL(p.objectUrl))
-        return nextPreviews
-      })
+      if (runIdRef.current !== runId) {
+        nextPreviews.forEach((p) => URL.revokeObjectURL(p.objectUrl))
+        return
+      }
+      cacheRef.current!.set(key, { previews: nextPreviews, zip: nextZip })
+      setPreviews(nextPreviews)
       setActiveZoom(FIXED_ZOOMS[0])
       setZipResults(nextZip)
       setCompileError(null)
@@ -165,6 +179,14 @@ export default function App() {
     downloadBlob(blob, `${stem(fileName)}_${clickX}x${clickY}.zip`)
   }
 
+  const selectedPreset = PARAMETER_PRESETS.find(
+    (p) =>
+      p.width === flags.width &&
+      p.height === flags.height &&
+      p.clickX === flags.clickX &&
+      p.clickY === flags.clickY,
+  )
+
   return (
     <div className="mx-auto min-h-svh max-w-5xl px-4 py-10 text-neutral-100">
       <header className="mb-8">
@@ -183,7 +205,7 @@ export default function App() {
           <select
             className="rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-300 outline-none focus:border-emerald-400 disabled:opacity-50"
             disabled={!engineReady}
-            value=""
+            value={fileName && fileName in TEMPLATE_LIBRARY ? fileName : ''}
             onChange={(e) => {
               const name = e.target.value
               if (name) handleTemplate(name, TEMPLATE_LIBRARY[name])
@@ -240,7 +262,7 @@ export default function App() {
             <span>Presets:</span>
             <select
               className="rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-300 outline-none focus:border-emerald-400"
-              value=""
+              value={selectedPreset?.label ?? ''}
               onChange={(e) => {
                 const preset = PARAMETER_PRESETS.find((p) => p.label === e.target.value)
                 if (preset) {

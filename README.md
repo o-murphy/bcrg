@@ -13,7 +13,7 @@
 
 ## 🌐 Web App
 
-Try the browser-based reticle generator, no installation required: **[web-name][web]**
+Try the browser-based reticle generator, no installation required: **[o-murphy.github.io/bcrg][web]**
 
 -----
 

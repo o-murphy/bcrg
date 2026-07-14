@@ -23,7 +23,7 @@ export function FlagsForm({ flags, onChange, disabled }: Props) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       <div>
-        <label className={labelClass}>Ширина (px)</label>
+        <label className={labelClass}>Width (px)</label>
         <input
           type="number"
           min={1}
@@ -34,7 +34,7 @@ export function FlagsForm({ flags, onChange, disabled }: Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>Висота (px)</label>
+        <label className={labelClass}>Height (px)</label>
         <input
           type="number"
           min={1}
@@ -45,7 +45,7 @@ export function FlagsForm({ flags, onChange, disabled }: Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>Клік X (см/100м)</label>
+        <label className={labelClass}>Click X (cm/100m)</label>
         <input
           type="text"
           inputMode="decimal"
@@ -57,7 +57,7 @@ export function FlagsForm({ flags, onChange, disabled }: Props) {
         />
       </div>
       <div>
-        <label className={labelClass}>Клік Y (см/100м)</label>
+        <label className={labelClass}>Click Y (cm/100m)</label>
         <input
           type="text"
           inputMode="decimal"

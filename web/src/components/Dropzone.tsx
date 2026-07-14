@@ -55,8 +55,7 @@ export function Dropzone({ fileName, onFile }: Props) {
         onChange={onChange}
       />
       <span className="text-sm text-neutral-400">
-        Перетягніть <code className="text-neutral-200">.lua</code> шаблон сюди, або
-        натисніть, щоб відкрити файл
+        Drag <code className="text-neutral-200">.lua</code> template here, or click to open file
       </span>
       {fileName && (
         <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-400">

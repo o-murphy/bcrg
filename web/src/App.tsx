@@ -50,6 +50,11 @@ function stem(fileName: string): string {
   return fileName.replace(/\.lua$/i, '')
 }
 
+function downloadLuaSource(source: string, fileName: string | null): void {
+  const blob = new Blob([source], { type: 'text/x-lua' })
+  downloadBlob(blob, fileName ?? 'template.lua')
+}
+
 export default function App() {
   const engineRef = useRef<ReticleEngine | null>(null)
   if (!engineRef.current) engineRef.current = new ReticleEngine()
@@ -68,7 +73,6 @@ export default function App() {
   const [sourceOpen, setSourceOpen] = useState(false)
 
   const runIdRef = useRef(0)
-  const skipDebounceRef = useRef(false)
   const flagsRef = useRef(flags)
   flagsRef.current = flags
   const fileNameRef = useRef(fileName)
@@ -148,21 +152,10 @@ export default function App() {
 
   function handleTemplate(name: string, source: string) {
     setError(null)
+    setCompileError(null)
     setFileName(name)
-    skipDebounceRef.current = true
     setEditorSource(source)
   }
-
-  // Live preview: recompile + regenerate whenever the edited source settles.
-  // Programmatic loads (dropzone / picker) skip the debounce for snappier feedback.
-  useEffect(() => {
-    if (!engineReady || !editorSource) return
-    const immediate = skipDebounceRef.current
-    skipDebounceRef.current = false
-    const timer = setTimeout(() => void runCompileAndGenerate(editorSource), immediate ? 0 : 500)
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorSource, engineReady])
 
   async function handleDownloadZip() {
     if (zipResults.length === 0 || !fileName) return
@@ -205,6 +198,15 @@ export default function App() {
               </option>
             ))}
           </select>
+          {editorSource && (
+            <button
+              type="button"
+              onClick={() => downloadLuaSource(editorSource, fileName)}
+              className="rounded-full border border-neutral-700 px-3 py-1 text-neutral-300 hover:border-emerald-400 hover:text-emerald-400"
+            >
+              Download .lua
+            </button>
+          )}
         </div>
       </section>
 

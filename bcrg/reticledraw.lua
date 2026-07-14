@@ -112,7 +112,12 @@ function ReticleDraw:c_arc(x, y, rx, ry, start_angle, end_angle, color)
 end
 
 function make_canvas(width, height, bit_depth)
-    local buffer_size = (width * height * bit_depth) / 8
+    -- MVLSB packs pixels into 8-row bands, so a height that isn't a
+    -- multiple of 8 still needs a full trailing band allocated, or the
+    -- last band's writes/reads fall outside the buffer.
+    local buffer_size = bit_depth == 1
+        and width * math.ceil(height / 8)
+        or (width * height * bit_depth) / 8
 
     -- Create a buffer for the display
     local buf = {}
@@ -200,20 +205,25 @@ function FrameBuffer:to_bmp_1bit()
     local function get_pixel_data_1bit(fb)
         local pixel_data = {}
         local row_padding = (4 - math.ceil(fb.width / 8) % 4) % 4
+        local buf = fb.buf
+        local stride = fb.stride
+        local width = fb.width
         for y = fb.height - 1, 0, -1 do
-            local row = {}
-            for x = 0, fb.width - 1, 8 do
+            -- MVLSB packs bits column-wise in 8-row bands, so for a fixed y
+            -- the source bytes are contiguous across x: reading fb.buf
+            -- directly here skips fb:pixel()'s per-call bounds check and
+            -- format dispatch, which dominates runtime for large canvases.
+            local row_base = (y // 8) * stride
+            local mask = 1 << (y % 8)
+            for x = 0, width - 1, 8 do
                 local byte = 0
-                for bit = 0, 7 do
-                    if x + bit < fb.width then
-                        local color = fb:pixel(x + bit, y)
-                        byte = byte + (color == 1 and 1 or 0) * 2 ^ (7 - bit)
+                local bit_max = math.min(7, width - 1 - x)
+                for bit = 0, bit_max do
+                    if (buf[row_base + x + bit + 1] & mask) ~= 0 then
+                        byte = byte + 2 ^ (7 - bit)
                     end
                 end
-                table.insert(row, byte)
-            end
-            for _, v in ipairs(row) do
-                table.insert(pixel_data, v)
+                table.insert(pixel_data, byte)
             end
             for _ = 1, row_padding do
                 table.insert(pixel_data, 0)

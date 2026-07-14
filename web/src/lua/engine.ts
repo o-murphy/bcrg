@@ -1,4 +1,4 @@
-import { LuaFactory, LuaEngine } from 'wasmoon'
+import { LuaFactory, LuaEngine, LuaReturn, LuaThread, LuaType } from 'wasmoon'
 
 import fontSrc from './vendor/font.lua?raw'
 import framebufSrc from './vendor/framebuf.lua?raw'
@@ -83,25 +83,15 @@ export class ReticleEngine {
   /** Calls make_reticle and returns the raw BMP bytes it produced. */
   generate(params: ReticleParams): Uint8Array {
     const lua = this.assertEngine()
-    const makeReticle = lua.global.get('make_reticle')
-    if (typeof makeReticle !== 'function') {
-      throw new LuaTemplateError('No template loaded yet')
-    }
     try {
-      const result = makeReticle(
+      return callAndExtractByteArray(lua.global, 'make_reticle', [
         params.width,
         params.height,
         params.clickX,
         params.clickY,
         params.zoom,
         undefined,
-      )
-      if (!Array.isArray(result)) {
-        throw new LuaTemplateError(
-          'make_reticle must return fb:to_bmp() or fb:to_bmp_1bit()',
-        )
-      }
-      return Uint8Array.from(result)
+      ])
     } catch (e) {
       if (e instanceof LuaTemplateError) throw e
       throw new LuaTemplateError(extractLuaMessage(e))
@@ -123,4 +113,42 @@ export class ReticleEngine {
 function extractLuaMessage(e: unknown): string {
   if (e instanceof Error) return e.message
   return String(e)
+}
+
+/**
+ * Calls a global Lua function and reads its single table return value
+ * straight off the Lua stack via lua_rawgeti/lua_tonumberx, instead of
+ * going through wasmoon's generic table decoder (LuaThread.call /
+ * LuaGlobal.get(...)(...)). That decoder walks the table twice with
+ * lua_next (once to detect array-ness, once to read values) and stringifies
+ * every numeric key, which dominates runtime for the ~50k-plus-element byte
+ * arrays a BMP-sized reticle produces.
+ */
+function callAndExtractByteArray(thread: LuaThread, name: string, args: unknown[]): Uint8Array {
+  const raw = thread.lua
+  const state = thread.address
+
+  if (raw.lua_getglobal(state, name) !== LuaType.Function) {
+    thread.pop(1)
+    throw new LuaTemplateError('No template loaded yet')
+  }
+  for (const arg of args) thread.pushValue(arg)
+  const status = raw.lua_pcallk(state, args.length, 1, 0, 0, null)
+  thread.assertOk(status as LuaReturn)
+
+  const tableIndex = thread.getTop()
+  if (raw.lua_type(state, tableIndex) !== LuaType.Table) {
+    thread.pop(1)
+    throw new LuaTemplateError('make_reticle must return fb:to_bmp() or fb:to_bmp_1bit()')
+  }
+
+  const length = Number(raw.lua_rawlen(state, tableIndex))
+  const bytes = new Uint8Array(length)
+  for (let i = 1; i <= length; i++) {
+    raw.lua_rawgeti(state, tableIndex, BigInt(i))
+    bytes[i - 1] = raw.lua_tonumberx(state, -1, null)
+    thread.pop(1)
+  }
+  thread.pop(1)
+  return bytes
 }

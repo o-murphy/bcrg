@@ -229,22 +229,34 @@ function FrameBuffer:to_bmp()
 
     local function get_pixel_data(fb)
         local pixel_data = {}
+        local buf = fb.buf
+        local stride = fb.stride
+        local width = fb.width
+        local is_mvlsb = fb.format == MVLSBFormat
         for y = fb.height - 1, 0, -1 do
-            for x = 0, fb.width - 1 do
-                local color
-                if fb.format == MVLSBFormat then
-                    color = fb:pixel(x, y) == 1 and { 255, 255, 255 } or { 0, 0, 0 }
+            -- MVLSB packs bits column-wise in 8-row bands, so for a fixed y
+            -- the source bytes are contiguous across x: reading fb.buf
+            -- directly here skips fb:pixel()'s per-call bounds check and
+            -- format dispatch, which dominates runtime for large canvases.
+            local row_base = is_mvlsb and ((y // 8) * stride) or nil
+            local mask = is_mvlsb and (1 << (y % 8)) or nil
+            for x = 0, width - 1 do
+                local r, g, b
+                if is_mvlsb then
+                    if (buf[row_base + x + 1] & mask) ~= 0 then
+                        r, g, b = 255, 255, 255
+                    else
+                        r, g, b = 0, 0, 0
+                    end
                 elseif fb.format == RGB565Format then
                     local color565 = fb:pixel(x, y)
-                    color = {
-                        ((color565 >> 11) & 0x1F) * 255 / 31,
-                        ((color565 >> 5) & 0x3F) * 255 / 63,
-                        (color565 & 0x1F) * 255 / 31
-                    }
+                    r = ((color565 >> 11) & 0x1F) * 255 / 31
+                    g = ((color565 >> 5) & 0x3F) * 255 / 63
+                    b = (color565 & 0x1F) * 255 / 31
                 end
-                table.insert(pixel_data, color[3])
-                table.insert(pixel_data, color[2])
-                table.insert(pixel_data, color[1])
+                table.insert(pixel_data, b)
+                table.insert(pixel_data, g)
+                table.insert(pixel_data, r)
             end
             -- Pad row to multiple of 4 bytes
             while (#pixel_data % 4 ~= 0) do

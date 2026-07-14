@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sync-lua": "node scripts/sync-lua.mjs",
+    "predev": "yarn sync-lua",
     "dev": "vite",
+    "prebuild": "yarn sync-lua",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

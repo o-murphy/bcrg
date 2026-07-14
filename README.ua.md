@@ -1,8 +1,19 @@
 # BCRG - Ballistic reticle generator
 
+[![license]](LICENSE)
+[![version]][pypi]
+[![python]][pypi]
+[![Made in Ukraine]][SWUBadge]
+
 ### Simple tool to generate dynamic ballistics reticles by .lua templates
 
 [<img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" width="20"/> **English**](./README.md)
+
+-----
+
+## 🌐 Веб-застосунок
+
+Спробуйте генератор сіток прямо в браузері, без встановлення: **[o-murphy.github.io/bcrg](https://o-murphy.github.io/bcrg/)**
 
 -----
 
@@ -232,3 +243,16 @@ end
 | **`fb:polygon(points, color)`**                             | Абсолютні           | Малює заповнений багатокутник.                    |
 | **`fb:text(s, x0, y0, col)`**                               | Абсолютні           | Малює текст стандартним шрифтом **8x8** пікселів. |
 | **`fb:arc(cx, cy, rx, ry, start_angle, end_angle, color)`** | Абсолютні           | Малює дугу. Кути в градусах, 0° = 12 годин.       |
+
+
+<!-- REUSABLE LINKS -->
+
+[license]: https://img.shields.io/github/license/o-murphy/bcrg
+[version]: https://img.shields.io/pypi/v/bcrg?logo=pypi
+[pypi]: https://pypi.org/project/bcrg
+[python]: https://img.shields.io/pypi/pyversions/bcrg?logo=python
+
+[web]: https://o-murphy.github.io/bcrg
+
+[Made in Ukraine]: https://img.shields.io/badge/made_in-Ukraine-ffd700.svg?labelColor=0057b7&style=flat-square
+[SWUBadge]: https://stand-with-ukraine.pp.ua

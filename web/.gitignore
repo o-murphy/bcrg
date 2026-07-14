@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Synced from ../templates and ../bcrg by scripts/sync-lua.mjs
+src/lua/templates/*.lua
+src/lua/vendor/*.lua
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

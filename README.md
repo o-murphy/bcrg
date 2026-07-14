@@ -1,8 +1,19 @@
 # BCRG - Ballistic reticle generator
 
+[![license]](LICENSE)
+[![version]][pypi]
+[![python]][pypi]
+[![Made in Ukraine]][SWUBadge]
+
 ### Simple tool to generate dynamic ballistics reticles by .lua templates
 
 [<img src="https://flagicons.lipis.dev/flags/4x3/ua.svg" width="20"/> **Українською**](./README.ua.md)
+
+-----
+
+## 🌐 Web App
+
+Try the browser-based reticle generator, no installation required: **[web-name][web]**
 
 -----
 
@@ -240,3 +251,16 @@ These methods require **absolute pixel coordinates** (`0,0` is the top-left corn
 | **`fb:polygon(points, color)`** | Absolute | Draws a filled polygon. |
 | **`fb:text(s, x0, y0, col)`** | Absolute | Draws text using the standard **8x8** pixel font. |
 | **`fb:arc(cx, cy, rx, ry, start_angle, end_angle, color)`** | Absolute | Draws an arc. Angles in degrees, 0° = 12 o'clock. |
+
+
+<!-- REUSABLE LINKS -->
+
+[license]: https://img.shields.io/github/license/o-murphy/bcrg
+[version]: https://img.shields.io/pypi/v/bcrg?logo=pypi
+[pypi]: https://pypi.org/project/bcrg
+[python]: https://img.shields.io/pypi/pyversions/bcrg?logo=python
+
+[web]: https://o-murphy.github.io/bcrg
+
+[Made in Ukraine]: https://img.shields.io/badge/made_in-Ukraine-ffd700.svg?labelColor=0057b7&style=flat-square
+[SWUBadge]: https://stand-with-ukraine.pp.ua

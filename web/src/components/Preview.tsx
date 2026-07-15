@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface PreviewItem {
   zoom: number
@@ -20,6 +20,23 @@ export function Preview({ items, activeZoom, onSelectZoom }: Props) {
   const [loupe, setLoupe] = useState<{ x: number; y: number; bgX: number; bgY: number } | null>(
     null,
   )
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null
+      if (target) {
+        const tag = target.tagName
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) {
+          return
+        }
+      }
+      const zoom = Number(e.key)
+      if (!items.some((item) => item.zoom === zoom)) return
+      onSelectZoom(zoom)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [items, onSelectZoom])
 
   if (items.length === 0) return null
 

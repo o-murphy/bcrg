@@ -321,7 +321,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => void handleDownloadZip()}
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-200 hover:border-emerald-400 hover:text-emerald-400"
+              className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-neutral-950 transition-colors hover:bg-emerald-400"
             >
               Download .zip
             </button>

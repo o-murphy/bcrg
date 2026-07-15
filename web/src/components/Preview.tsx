@@ -89,7 +89,7 @@ export function Preview({ items, activeZoom, onSelectZoom }: Props) {
           draggable={false}
         />
         {!loupe && (
-          <span className="pointer-events-none absolute right-2 top-2 rounded-full bg-neutral-950/70 px-2 py-1 text-[10px] text-neutral-300">
+          <span className="pointer-events-none absolute right-2 top-2 rounded-full bg-neutral-950/70 px-3 py-1.5 text-sm text-neutral-200">
             Hold to zoom
           </span>
         )}

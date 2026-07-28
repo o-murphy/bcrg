@@ -19,7 +19,7 @@ dev = [
 requires-dist = [{ name = "lupa", specifier = ">=2.8" }]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.15.22" }]
+dev = [{ name = "ruff", specifier = ">=0.16.0" }]
 
 [[package]]
 name = "lupa"

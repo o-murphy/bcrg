@@ -37,7 +37,7 @@ dependencies = ["lupa>=2.8"]
 packages = ["bcrg"]
 
 [dependency-groups]
-dev = ["ruff>=0.15.22"]
+dev = ["ruff>=0.16.0"]
 
 [project.scripts]
 bcrg = "bcrg.__main__:main"

@@ -95,12 +95,13 @@ You can integrate the generator directly into your Python code:
 
 ```python
 from bcrg import LuaReticleLoader
-loader = LuaReticleLoader('my_reticle_template.lua')
+
+loader = LuaReticleLoader("my_reticle_template.lua")
 
 # Create 1bit-depth .bmp bytearray
 # Parameters: width, height, click_x, click_y, zoom, adjustment
 byte_stream = loader.make_bmp(640, 480, 2.27, 2.27, 4, None)
-with open("myreticle.bmp", 'wb') as f:
+with open("myreticle.bmp", "wb") as f:
     f.write(byte_stream)
 ```
 

@@ -1,12 +1,11 @@
 import argparse
 import io
 import sys
-import zipfile
 import tarfile
+import zipfile
 from pathlib import Path
 
 from bcrg import LuaReticleLoader
-
 
 try:
     from importlib.metadata import metadata
@@ -223,7 +222,7 @@ def main():
             )
         else:
             store_to_dir(zip_arr, destination_base, force=args.force)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level CLI handler reports any failure via parser.error
         parser.error(e)
 
     parser.exit(0)
